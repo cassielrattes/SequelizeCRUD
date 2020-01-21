@@ -27,6 +27,7 @@ class UserController {
 
       if (!user) {
         await User.create(req.body);
+        return res.json({ msg: "User Created" });
       } else {
         return res.json({ msg: "User Already Exists" });
       }
@@ -37,9 +38,16 @@ class UserController {
 
   async update(req, res) {
     try {
+      const userCheck = await User.findOne({
+        where: { email: req.body.email }
+      });
       const user = await User.findByPk(req.params.id);
 
-      await user.update(req.body);
+      if (!userCheck) {
+        await user.update(req.body);
+      } else {
+        return res.json({ msg: "Email Already Exists" });
+      }
 
       return res.json({ user });
     } catch (err) {
