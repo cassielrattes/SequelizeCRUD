@@ -17,7 +17,7 @@ class SessionController {
           if (result === true) {
             const token = jwt.sign(
               {
-                data: user.id
+                id: req.body.id
               },
               authConfig.secret,
               { expiresIn: authConfig.expiresIn }
