@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define("User", {
     name: DataTypes.STRING,
@@ -13,6 +15,28 @@ module.exports = (sequelize, DataTypes) => {
         len: [8, 20]
       }
     }
+  });
+
+  User.beforeCreate((user, options) => {
+    return bcrypt
+      .hash(user.password, 10)
+      .then(hash => {
+        user.password = hash;
+      })
+      .catch(err => {
+        throw new Error();
+      });
+  });
+
+  User.afterUpdate((user, options) => {
+    return bcrypt
+      .hash(user.password, 10)
+      .then(hash => {
+        user.password = hash;
+      })
+      .catch(err => {
+        throw new Error();
+      });
   });
 
   return User;

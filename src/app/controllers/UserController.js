@@ -23,14 +23,15 @@ class UserController {
 
   async store(req, res) {
     try {
-      const user = await User.findOne({ where: { email: req.body.email } });
+      const user = await User.findOrCreate({
+        where: { email: req.body.email },
+        defaults: {
+          name: req.body.name,
+          password: req.body.password
+        }
+      });
 
-      if (!user) {
-        await User.create(req.body);
-        return res.json({ msg: "User Created" });
-      } else {
-        return res.json({ msg: "User Already Exists" });
-      }
+      return res.json(user);
     } catch (err) {
       return res.status(400).json({ error: err.message });
     }
@@ -49,7 +50,7 @@ class UserController {
         return res.json({ msg: "Email Already Exists" });
       }
 
-      return res.json({ user });
+      return res.json(user);
     } catch (err) {
       return res.status(400).json({ error: err.message });
     }
@@ -61,7 +62,7 @@ class UserController {
 
       await user.destroy();
 
-      return res.json();
+      return res.json(user);
     } catch (err) {
       return res.status(400).json({ error: err.message });
     }
