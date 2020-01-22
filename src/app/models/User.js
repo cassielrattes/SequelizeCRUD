@@ -10,10 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     password: {
-      type: DataTypes.STRING,
-      validate: {
-        len: [8, 20]
-      }
+      type: DataTypes.STRING
     }
   });
 
@@ -28,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       });
   });
 
-  User.afterUpdate((user, options) => {
+  User.beforeUpdate((user, options) => {
     return bcrypt
       .hash(user.password, 10)
       .then(hash => {
