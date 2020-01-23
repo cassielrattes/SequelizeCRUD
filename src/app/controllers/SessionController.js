@@ -1,33 +1,22 @@
-const jwt = require("jsonwebtoken");
 const { User } = require("../models");
-const authConfig = require("../../config/auth");
-const bcrypt = require("bcryptjs");
 
 class SessionController {
   async store(req, res) {
-    User.findOne({
-      where: {
-        email: req.body.email
-      }
-    }).then(function(user) {
-      if (!user) {
-        return res.json({ error: "User do not exists" });
-      } else {
-        bcrypt.compare(req.body.password, user.password, function(err, result) {
-          if (result === true) {
-            const token = jwt.sign(
-              {
-                id: req.body.id
-              },
-              authConfig.secret,
-              { expiresIn: authConfig.expiresIn }
-            );
-            return res.json(token);
-          } else {
-            return res.json({ error: "Incorrect password" });
-          }
-        });
-      }
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    if (!(await user.checkPassword(password))) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    return res.json({
+      user,
+      token: user.generateToken()
     });
   }
 }
