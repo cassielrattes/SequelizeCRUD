@@ -15,12 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     horario: {
       type: DataTypes.TIME,
       unique: true,
-      allowNull: false,
-      get() {
-        return moment(this.getDataValue("horario")).format(
-          "DD/MM/YYYY h:mm:ss"
-        );
-      }
+      allowNull: false
     },
     data: {
       type: DataTypes.DATEONLY,
