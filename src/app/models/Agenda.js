@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATEONLY,
       allowNull: false,
       get() {
-        return moment(this.getDataValue("data")).format("DD/MM/YYYY");
+        return moment.utc(this.getDataValue("data")).format("DD/MM/YYYY");
       }
     }
   });
